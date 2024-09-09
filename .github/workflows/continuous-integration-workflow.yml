@@ -47,7 +47,7 @@ jobs:
       
       # Run the tests.
       - name: Running tests
-      - run: cd frontend && npm test
+        run: cd frontend && npm test
           
       # Run the linter.
       # - run: cd frontend && npx eslint .
