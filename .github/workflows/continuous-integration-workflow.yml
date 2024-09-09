@@ -22,8 +22,8 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
-        #node-version: [18.18.0]
+        #node-version: [16.x, 18.x]
+        node-version: [18.18.0]
 
     steps:
       # Check out the code from the repository.
