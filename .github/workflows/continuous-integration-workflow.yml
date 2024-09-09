@@ -1,0 +1,72 @@
+# Workflow name
+name: ci-Workflow
+
+# Triggers for the workflow
+on:
+  # Rub ob demand
+  workflow_dispatch:
+  # Automatic trigger on pull request events targeting the main branch
+  pull_request:
+    branches:
+      - main
+      
+  paths:
+    # Specify paths that should trigger the workflow
+    - 'frontend/**'
+  
+#Use a matrix strategy to use Node.js versions 16.x and 18.x
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x]
+        #node-version: [18.18.0]
+
+    steps:
+      # Check out the code from the repository.
+      - uses: actions/checkout@v3
+
+      # Set up a Node.js environment using the specified node version.
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          
+      - name: Init json package
+        run: npm init -y
+
+      # Install the dependencies.
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+          npm install mocha eslint --save-dev
+      
+      - name: Create ESLint configuration
+        run: |
+          echo '{
+            "env": {
+              "browser": true,
+              "es2021": true,
+              "node": true,
+              "mocha": true   // Add Mocha environment
+            },
+            "extends": "eslint:recommended",
+            "parserOptions": {
+              "ecmaVersion": "latest",
+              "sourceType": "module"
+            },
+            "rules": {}
+          }' > frontend/.eslintrc.json
+
+      # Run the tests.
+      - run: cd frontend && npm test
+
+      # Run the linter.
+      - run: cd frontend && npx eslint .
+
+      # Send a console message at completion.
+      - run: |
+          echo "Hello ${{github.actor}}. You pushed to ${{github.repository}} at $(date)."
