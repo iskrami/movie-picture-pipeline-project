@@ -34,38 +34,26 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           
-      - name: Init json package
-        run: npm init -y
+      # - name: Init json package
+        # run: npm init -y
+        
+      # Use correct Node.js version
+      - name: Use correct Node.js version
+        run: nvm use
 
       # Install the dependencies.
       - name: Install dependencies
-        run: |
-          cd frontend
-          npm install
-          npm install mocha eslint --save-dev
+        run: cd frontend && npm ci
       
-      - name: Create ESLint configuration
-        run: |
-          echo '{
-            "env": {
-              "browser": true,
-              "es2021": true,
-              "node": true,
-              "mocha": true   // Add Mocha environment
-            },
-            "extends": "eslint:recommended",
-            "parserOptions": {
-              "ecmaVersion": "latest",
-              "sourceType": "module"
-            },
-            "rules": {}
-          }' > frontend/.eslintrc.json
+      # Run the tests.
+      - name: Running tests
+      - run: cd frontend && npm test
           
       # Run the linter.
-      - run: cd frontend && npx eslint .
+      # - run: cd frontend && npx eslint .
+      - run: cd frontend && npm run lint
 
-      # Run the tests.
-      - run: cd frontend && npm test
+
 
       # Send a console message at completion.
       - run: |
