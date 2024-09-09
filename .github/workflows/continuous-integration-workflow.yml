@@ -38,8 +38,8 @@ jobs:
         run: npm init -y
         
       # Use correct Node.js version
-      - name: Use correct Node.js version
-        run: nvm use
+      # - name: Use correct Node.js version
+        # run: nvm use
 
       # Install the dependencies.
       - name: Install dependencies
