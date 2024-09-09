@@ -51,7 +51,7 @@ jobs:
           
       # Run the linter.
       # - run: cd frontend && npx eslint .
-      - run: cd frontend && npm run lint
+      - run: cd frontend && npm run lint --fix
 
 
 
