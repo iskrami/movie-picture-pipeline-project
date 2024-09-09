@@ -34,8 +34,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           
-      # - name: Init json package
-        # run: npm init -y
+      - name: Init json package
+        run: npm init -y
         
       # Use correct Node.js version
       - name: Use correct Node.js version
