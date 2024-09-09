@@ -60,12 +60,12 @@ jobs:
             },
             "rules": {}
           }' > frontend/.eslintrc.json
+          
+      # Run the linter.
+      - run: cd frontend && npx eslint .
 
       # Run the tests.
       - run: cd frontend && npm test
-
-      # Run the linter.
-      - run: cd frontend && npx eslint .
 
       # Send a console message at completion.
       - run: |
