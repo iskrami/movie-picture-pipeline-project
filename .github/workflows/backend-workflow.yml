@@ -41,7 +41,7 @@ jobs:
       - name: Run tests with Pipenv
         run: |
           cd backend
-          pipenv run python test_app.py
+          pipenv run test
           pipenv run lint
 
       # Optional: Run the application or any other script

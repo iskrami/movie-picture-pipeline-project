@@ -1,4 +1,4 @@
-from backend import app
+from . import app
 import os
 
 
