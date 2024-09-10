@@ -48,7 +48,7 @@ jobs:
       - name: Run lint with Pipenv
         run: |
           cd backend
-          pipenv run lint  # Ensure 'lint' is defined in Pipfile [scripts] section if needed
+          pipenv run lint
 
       # Optional: Run the application or any other script
       - name: Run Application
