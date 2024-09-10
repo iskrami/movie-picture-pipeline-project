@@ -14,6 +14,9 @@ on:
     paths:
       # Specify paths that should trigger the workflow
       - 'frontend/**'
+      
+env:
+  REACT_APP_MOVIE_API_URL: 'http://localhost:5000'
   
 #Use a matrix strategy to use Node.js versions 16.x and 18.x
 jobs:
@@ -50,7 +53,7 @@ jobs:
       - run: cd frontend && npm run lint
 
       # Build and Run docker image
-      - run: cd frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=mp-frontend:latest .
+      - run: cd frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL=${{env.REACT_APP_MOVIE_API_URL}} --tag=mp-frontend:latest .
       - run: cd frontend && docker run --name mp-frontend -p 3000:3000 -d mp-frontend
 
       # Send a console message at completion.
