@@ -82,9 +82,9 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: backend-repo
-        # run: |
-          # cd backend && docker build --tag mp-backend:latest .
-          # docker push $REGISTRY/$REPOSITORY:mp-backend:latest
+        run: |
+          docker build --tag mp-backend:latest .
+          docker push $REGISTRY/$REPOSITORY:mp-backend:latest
      
       
       # Deploy to kubernetes
