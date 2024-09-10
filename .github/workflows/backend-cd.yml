@@ -54,6 +54,17 @@ jobs:
       - run: cd backend && docker build -t mp-backend .
       # - run: cd backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
       
+      # Save the Docker image as a tarball
+      - name: Save Docker image as artifact
+        run: |
+          docker save mp-backend -o mp-backend.tar
+        # Upload the tarball as an artifact
+        - name: Upload Docker image artifact
+          uses: actions/upload-artifact@v3
+          with:
+            name: mp-backend-image
+            path: mp-backend.tar
+      
       # Check the running application
       # - run: curl http://localhost:5000/movies
       
@@ -72,6 +83,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token: ${{secrets.AWS_SESSION_TOKEN}}
           aws-region: us-east-1
+          
+      # Download and load the Docker image artifact
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: mp-backend-image
+
+      - name: Load Docker image
+        run: |
+          docker load -i mp-backend.tar
       
       # Authenticate to Amazon ECR
       - name: Login to Amazon ECR
