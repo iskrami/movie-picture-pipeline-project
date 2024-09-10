@@ -55,7 +55,7 @@ jobs:
           # docker stop mp-frontend || true
           # docker rm mp-frontend || true
           
-      Stop and remove any existing container using port 3000
+      # Stop and remove any existing container using port 3000
       # - name: Identify and free up port 3000
         # run: |
           # if [ "$(docker ps -q -f publish=3000)" ]; then
