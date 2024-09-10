@@ -24,11 +24,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Python (specify your Python version here)
+      # Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10' # Use the Python version that you need
+          python-version: '3.10'
 
       # Install pipenv and dependencies
       - name: Install Pipenv and Dependencies
@@ -58,7 +58,7 @@ jobs:
       - run: curl http://localhost:5000/movies
       
       # Review logs
-      - run: docker logs -f mp-backend
+      # - run: docker logs -f mp-backend
       
       # Stop the application
       - run: docker stop
