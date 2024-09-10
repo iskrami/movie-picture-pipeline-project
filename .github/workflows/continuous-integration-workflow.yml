@@ -52,8 +52,8 @@ jobs:
       # Run the linter.
       - run: cd frontend && npm run lint
       
-      - run: docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=mp-frontend:latest .
-      - run: docker run --name mp-frontend -p 3000:3000 -d mp-frontend
+      - run: cd frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=mp-frontend:latest .
+      - run: cd frontend && docker run --name mp-frontend -p 3000:3000 -d mp-frontend
 
 
       # Send a console message at completion.
