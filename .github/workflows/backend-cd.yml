@@ -59,11 +59,11 @@ jobs:
         run: |
           docker save mp-backend -o mp-backend.tar
         # Upload the tarball as an artifact
-        - name: Upload Docker image artifact
-          uses: actions/upload-artifact@v3
-          with:
-            name: mp-backend-image
-            path: mp-backend.tar
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mp-backend-image
+          path: mp-backend.tar
       
       # Check the running application
       # - run: curl http://localhost:5000/movies
