@@ -50,8 +50,19 @@ jobs:
           cd backend
           pipenv run lint
 
-      # Optional: Run the application or any other script
-      # - name: Run Application
-        # run: |
-          # cd backend
-          # pipenv run python -m <module_name>  # Replace <module_name> with your main module
+      # Build and Run docker image
+      - run: cd backend && docker build --tag mp-backend:latest .
+      - run: cd backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
+      
+      # Check the running application
+      - run: curl http://localhost:5000/movies
+      
+      # Review logs
+      - run: docker logs -f mp-backend
+      
+      # Stop the application
+      - run: docker stop
+
+      # Send a console message at completion.
+      - run: |
+          echo "Hello ${{github.actor}}. You pushed to ${{github.repository}} at $(date)."
