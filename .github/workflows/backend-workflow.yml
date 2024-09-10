@@ -52,11 +52,18 @@ jobs:
 
       # Build and Run docker image
       - run: cd backend && docker build --tag mp-backend:latest .
-      - run: cd backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
+      # - run: cd backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
       
       # Check the running application
-      - run: curl http://localhost:5000/movies
+      # - run: curl http://localhost:5000/movies
       
+      # Deploy to kubernetes
+      - name: Push to Kuberenetes
+        run: |
+          cd backend/k8s
+          kustomize edit set image backend=425586105601.dkr.ecr.us-east-1.amazonaws.com/backend-repo:mp-backend
+          kustomize build | kubectl apply -f -
+          
       # Review logs
       # - run: docker logs -f mp-backend
       
