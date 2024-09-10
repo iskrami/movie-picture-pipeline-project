@@ -50,9 +50,10 @@ jobs:
         run: cd frontend && npm test
           
       # Run the linter.
-      # - run: cd frontend && npx eslint .
       - run: cd frontend && npm run lint
-
+      
+      - run: docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=mp-frontend:latest .
+      - run: docker run --name mp-frontend -p 3000:3000 -d mp-frontend
 
 
       # Send a console message at completion.
