@@ -1,0 +1,57 @@
+# Workflow name
+name: Frontend Continuous Integration
+
+# Triggers for the workflow
+on:
+  # Run workflow on demand
+  workflow_dispatch:
+  
+  # Automatic trigger on pull request events targeting the main branch
+  pull_request:
+    branches:
+      - main
+      
+    paths:
+      # Specify paths that should trigger the workflow
+      - 'frontend/**'
+      
+env:
+  REACT_APP_MOVIE_API_URL: 'http://localhost:5000'
+  
+#Use a matrix strategy to use Node.js versions 16.x and 18.x
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the code from the repository.
+      - uses: actions/checkout@v3
+
+      # Set up a Node.js environment using the specified node version.
+      - name: Set up Node.js 
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+          
+      - name: Init json package
+        run: npm init -y
+
+      # Install the dependencies.
+      - name: Install dependencies
+        run: cd frontend && npm ci
+      
+      # Run the tests.
+      - name: Running tests
+        run: cd frontend && npm test
+          
+      # Run the linter.
+      - run: cd frontend && npm run lint
+
+      # Build and Run docker image
+      - run: cd frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL=${{env.REACT_APP_MOVIE_API_URL}} --tag=mp-frontend:latest .
+      - run: cd frontend && docker run --name mp-frontend -p 3000:3000 -d mp-frontend
+
+      # Send a console message at completion.
+      - run: |
+          echo "Hello ${{github.actor}}. You pushed to ${{github.repository}} at $(date)."

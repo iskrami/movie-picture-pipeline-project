@@ -1,5 +1,5 @@
 # Workflow name
-name: frontend-workflow
+name: Frontend Continuous Deployment
 
 # Triggers for the workflow
 on:
@@ -24,19 +24,15 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        #node-version: [16.x, 18.x]
-        node-version: [18.18.0]
-
     steps:
       # Check out the code from the repository.
       - uses: actions/checkout@v3
 
       # Set up a Node.js environment using the specified node version.
-      - uses: actions/setup-node@v3
+      - name: Set up Node.js 
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: latest
           
       - name: Init json package
         run: npm init -y
