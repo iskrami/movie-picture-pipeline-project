@@ -83,7 +83,7 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: backend-repo
         run: |
-          docker tag $REGISTRY/$REPOSITORY:mp-backend
+          docker tag mp-backend $REGISTRY/$REPOSITORY:mp-backend
           docker push $REGISTRY/$REPOSITORY:mp-backend
      
       
