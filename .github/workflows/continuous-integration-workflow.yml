@@ -50,6 +50,11 @@ jobs:
       
       - run: cd frontend && REACT_APP_MOVIE_API_URL=http://localhost:5000 npm start &
       
+      - name: Stop and remove existing container
+        run: |
+          docker stop mp-frontend || true
+          docker rm mp-frontend || true
+      
       - run: cd frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=mp-frontend:latest .
       - run: cd frontend && docker run --name mp-frontend -p 3000:3000 -d mp-frontend
 
