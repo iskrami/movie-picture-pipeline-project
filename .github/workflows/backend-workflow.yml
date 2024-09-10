@@ -61,7 +61,7 @@ jobs:
       # - run: docker logs -f mp-backend
       
       # Stop the application
-      - run: docker stop
+      # - run: docker stop
 
       # Send a console message at completion.
       - run: |
