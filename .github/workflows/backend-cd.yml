@@ -51,7 +51,7 @@ jobs:
           pipenv run lint
 
       # Build and Run docker image
-      - run: cd backend && docker build --tag mp-backend:latest .
+      # - run: cd backend && docker build --tag mp-backend:latest .
       # - run: cd backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
       
       # Check the running application
