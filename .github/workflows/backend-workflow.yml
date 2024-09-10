@@ -51,7 +51,7 @@ jobs:
           pipenv run lint
 
       # Optional: Run the application or any other script
-      - name: Run Application
-        run: |
-          cd backend
-          pipenv run python -m <module_name>  # Replace <module_name> with your main module
+      # - name: Run Application
+        # run: |
+          # cd backend
+          # pipenv run python -m <module_name>  # Replace <module_name> with your main module
