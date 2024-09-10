@@ -48,20 +48,20 @@ jobs:
       # Run the linter.
       - run: cd frontend && npm run lint
       
-      - run: cd frontend && REACT_APP_MOVIE_API_URL=http://localhost:5000 npm start &
+      # - run: cd frontend && REACT_APP_MOVIE_API_URL=http://localhost:5000 npm start &
       
-      - name: Stop and remove existing container
-        run: |
-          docker stop mp-frontend || true
-          docker rm mp-frontend || true
+      # - name: Stop and remove existing container
+        # run: |
+          # docker stop mp-frontend || true
+          # docker rm mp-frontend || true
           
-      # Stop and remove any existing container using port 3000
-      - name: Identify and free up port 3000
-        run: |
-          if [ "$(docker ps -q -f publish=3000)" ]; then
-            docker stop $(docker ps -q -f publish=3000)
-            docker rm $(docker ps -q -f publish=3000)
-          fi
+      Stop and remove any existing container using port 3000
+      # - name: Identify and free up port 3000
+        # run: |
+          # if [ "$(docker ps -q -f publish=3000)" ]; then
+            # docker stop $(docker ps -q -f publish=3000)
+            # docker rm $(docker ps -q -f publish=3000)
+          # fi
       
       - run: cd frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=mp-frontend:latest .
       - run: cd frontend && docker run --name mp-frontend -p 3000:3000 -d mp-frontend
