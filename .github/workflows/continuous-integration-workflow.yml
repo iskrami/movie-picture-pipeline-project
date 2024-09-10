@@ -36,10 +36,6 @@ jobs:
           
       - name: Init json package
         run: npm init -y
-        
-      # Use correct Node.js version
-      # - name: Use correct Node.js version
-        # run: nvm use
 
       # Install the dependencies.
       - name: Install dependencies
@@ -51,6 +47,8 @@ jobs:
           
       # Run the linter.
       - run: cd frontend && npm run lint
+      
+      REACT_APP_MOVIE_API_URL=http://localhost:5000 npm start
       
       - run: cd frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=mp-frontend:latest .
       - run: cd frontend && docker run --name mp-frontend -p 3000:3000 -d mp-frontend
