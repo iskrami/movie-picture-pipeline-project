@@ -1,10 +1,10 @@
 name: Backend Continuous Deployment
 
 on:
-  workflow_run:
-    workflows: ["Backend Continuous Integration"]
-    types:
-      - completed
+  # workflow_run:
+    # workflows: ["Backend Continuous Integration"]
+    # types:
+      # - completed
   # Run workflow on demand
   workflow_dispatch:
 
