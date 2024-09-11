@@ -1,84 +1,58 @@
-# Workflow name
 name: Backend Continuous Integration
 
-# Triggers for the workflow
 on:
-  # Run workflow on demand
-  workflow_dispatch:
-  
-  # Automatic trigger on pull request events targeting the main branch
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
   pull_request:
     branches:
       - main
-      
     paths:
-      # Specify paths that should trigger the workflow
       - 'backend/**'
-  
+
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
-      # Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      # Install pipenv and dependencies
       - name: Install Pipenv and Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pipenv
           cd backend
-          pipenv install --dev  # Install all dependencies including dev dependencies
+          pipenv install --dev
 
-      # Run tests using pytest with Pipenv
       - name: Run tests with pytest
         run: |
           cd backend
-          pipenv run pytest  # Use the pipenv environment to run pytest
+          pipenv run pytest
 
-      # Run lint using pipenv
       - name: Run lint with Pipenv
         run: |
           cd backend
           pipenv run lint
 
-      # Build and Run docker image
-      - run: cd backend && docker build --tag mp-backend:latest .
-      # - run: cd backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
-      
-      # Check the running application
-      # - run: curl http://localhost:5000/movies
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to container registry
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
-      
-      # Deploy to kubernetes
-      - name: Push to Kuberenetes
+      - name: Build Docker image
         run: |
-          cd backend/k8s
-          kustomize edit set image backend=425586105601.dkr.ecr.us-east-1.amazonaws.com/backend-repo:mp-backend
-          kustomize build | kubectl apply -f -
-          
-      # Review logs
-      # - run: docker logs -f mp-backend
-      
-      # Stop the application
-      # - run: docker stop
+          cd backend
+          docker build -t mp-backend .
 
-      # Send a console message at completion.
-      - run: |
-          echo "Hello ${{github.actor}}. You pushed to ${{github.repository}} at $(date)."
+      - name: Save Docker image as artifact
+        run: |
+          docker save mp-backend -o mp-backend.tar
+
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mp-backend-image
+          path: backend/mp-backend.tar
