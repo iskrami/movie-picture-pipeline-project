@@ -30,6 +30,17 @@ jobs:
         with:
           python-version: '3.10'
 
+      # Cache pipenv virtual environment and pip cache
+      - name: Cache pipenv environment and pip cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/backend/Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pipenv-
+
       # Install pipenv and dependencies
       - name: Install Pipenv and Dependencies
         run: |
@@ -57,7 +68,8 @@ jobs:
       - name: Save Docker image as artifact
         run: |
           docker save mp-backend -o mp-backend.tar
-        # Upload the tarball as an artifact
+
+      # Upload the tarball as an artifact
       - name: Upload Docker image artifact
         uses: actions/upload-artifact@v3
         with:
@@ -110,7 +122,7 @@ jobs:
         run: aws eks update-kubeconfig --name movie-picture-cluster --region us-east-1
       
       # Deploy to kubernetes
-      - name: Push to Kuberenetes
+      - name: Push to Kubernetes
         run: |
           cd backend/k8s
           kustomize edit set image backend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
@@ -119,5 +131,3 @@ jobs:
       # Send a console message at completion.
       - run: |
           echo "Hello ${{github.actor}}. You pushed to ${{github.repository}} at $(date)."
-          
-          
