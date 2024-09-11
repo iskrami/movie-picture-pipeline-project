@@ -106,4 +106,10 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: mp-backend-image
-          path: mp-backend.tar
+          path: backend/mp-backend.tar
+          
+      - name: Print current directory
+        run: pwd
+
+      - name: List files in the current directory
+        run: ls -la
