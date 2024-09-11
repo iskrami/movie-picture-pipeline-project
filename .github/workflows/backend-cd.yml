@@ -5,6 +5,8 @@ on:
     workflows: ["Backend Continuous Integration"]
     types:
       - completed
+  # Run workflow on demand
+  workflow_dispatch:
 
 jobs:
   deploy:
