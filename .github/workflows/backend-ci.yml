@@ -100,7 +100,7 @@ jobs:
       # Save the Docker image as a tarball
       - name: Save Docker image as artifact
         run: |
-          docker save backend/artifacts/mp-backend -o mp-backend.tar
+          docker save mp-backend -o mp-backend.tar
         # Upload the tarball as an artifact
       - name: Upload Docker image artifact
         uses: actions/upload-artifact@v3
