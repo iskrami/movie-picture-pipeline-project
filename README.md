@@ -5,6 +5,3 @@ eksctl create cluster --name movie-picture-cluster --region us-east-1 --nodegrou
 aws eks --region us-east-1 update-kubeconfig --name movie-picture-cluster
 
 eksctl delete cluster --name movie-picture-cluster --region us-east-1
-
-
-aws sts assume-role --role-arn arn:aws:iam::425586105601:user/nano-admin --role-session-name YourSessionName --query Credentials.SessionToken --output text
