@@ -20,10 +20,8 @@ env:
   
 #Use a matrix strategy to use Node.js versions 16.x and 18.x
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
     steps:
       # Check out the code from the repository.
       - uses: actions/checkout@v3
@@ -44,13 +42,112 @@ jobs:
       # Run the tests.
       - name: Running tests
         run: cd frontend && npm test
+        
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the code from the repository.
+      - uses: actions/checkout@v3
+
+      # Set up a Node.js environment using the specified node version.
+      - name: Set up Node.js 
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
           
+      - name: Init json package
+        run: npm init -y
+
+      # Install the dependencies.
+      - name: Install dependencies
+        run: cd frontend && npm ci
       # Run the linter.
       - run: cd frontend && npm run lint
+  build:
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    steps:
+      # Check out the code from the repository.
+      - uses: actions/checkout@v3
 
+      # Set up a Node.js environment using the specified node version.
+      - name: Set up Node.js 
+        uses: actions/setup-node@v3
+        with:
+          node-version: latest
+          
+      - name: Init json package
+        run: npm init -y
+
+      # Install the dependencies.
+      - name: Install dependencies
+        run: cd frontend && npm ci
+    
       # Build and Run docker image
-      - run: cd frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL=${{env.REACT_APP_MOVIE_API_URL}} --tag=mp-frontend:latest .
-      - run: cd frontend && docker run --name mp-frontend -p 3000:3000 -d mp-frontend
+      - name: Build Docker Image
+        run: |
+           cd frontend && docker build --build-arg=REACT_APP_MOVIE_API_URL=${{env.REACT_APP_MOVIE_API_URL}} --tag=mp-frontend:latest .
+        
+      # Save the Docker image as a tarball
+      - name: Save Docker image as artifact
+        run: |
+          docker save mp-frontend -o mp-frontend.tar
+        # Upload the tarball as an artifact
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mp-frontend-image
+          path: mp-frontend.tar
+      
+  stage_deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      # Check out the code from the repository.
+      - uses: actions/checkout@v3
+
+      # Simulate a Deployment
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{secrets.AWS_SESSION_TOKEN}}
+          aws-region: us-east-1
+          
+      # Download and load the Docker image artifact
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: mp-frontend-image
+
+      - name: Load Docker image
+        run: |
+          docker load -i mp-frontend.tar
+      
+      # Authenticate to Amazon ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push docker image to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: frontend-repo
+          IMAGE_TAG: mp-frontend-${{ github.run_number }}
+        run: |
+          docker tag mp-frontend $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          
+      - name: Update Kubeconfig
+        run: aws eks update-kubeconfig --name movie-picture-cluster --region us-east-1
+      
+      # Deploy to kubernetes
+      - name: Push to Kuberenetes
+        run: |
+          cd frontend/k8s
+          kustomize edit set image frontend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
+          kustomize build | kubectl apply -f -
 
       # Send a console message at completion.
       - run: |
