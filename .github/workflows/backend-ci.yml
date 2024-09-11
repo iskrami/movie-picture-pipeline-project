@@ -2,17 +2,13 @@
 name: Backend Continuous Integration
 
 # Triggers for the workflow
-on:
+on:  
   # Run workflow on demand
   workflow_dispatch:
-  
-  # Automatic trigger on pull request events targeting the main branch
   pull_request:
     branches:
       - main
-      
     paths:
-      # Specify paths that should trigger the workflow
       - 'backend/**'
   
 jobs:
@@ -20,15 +16,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
+      # Cache pip dependencies
+      - name: Cache pipenv dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip  # Cache pip downloads
+            ~/.local/share/virtualenvs  # Cache Pipenv's virtual environment
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/backend/Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pipenv-
 
       # Install pipenv and dependencies
       - name: Install Pipenv and Dependencies
@@ -38,24 +43,33 @@ jobs:
           cd backend
           pipenv install --dev  # Install all dependencies including dev dependencies
 
-      # Run tests using pytest with Pipenv
       - name: Run tests with pytest
         run: |
           cd backend
           pipenv run pytest  # Use the pipenv environment to run pytest
+
   lint:
     runs-on: ubuntu-latest
-    
+
     steps:
-      # Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
-        
-      # Set up Python
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
+      # Cache pip dependencies
+      - name: Cache pipenv dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip  # Cache pip downloads
+            ~/.local/share/virtualenvs  # Cache Pipenv's virtual environment
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/backend/Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pipenv-
 
       # Install pipenv and dependencies
       - name: Install Pipenv and Dependencies
@@ -64,25 +78,35 @@ jobs:
           pip install pipenv
           cd backend
           pipenv install --dev  # Install all dependencies including dev dependencies
-    
-      # Run lint using pipenv
+
       - name: Run lint with Pipenv
         run: |
           cd backend
           pipenv run lint
+
   build:
     runs-on: ubuntu-latest
     needs: [test, lint]
+
     steps:
-      # Check out the code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
-        
-      # Set up Python
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
+      # Cache pip dependencies
+      - name: Cache pipenv dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip  # Cache pip downloads
+            ~/.local/share/virtualenvs  # Cache Pipenv's virtual environment
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/backend/Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pipenv-
 
       # Install pipenv and dependencies
       - name: Install Pipenv and Dependencies
@@ -91,7 +115,6 @@ jobs:
           pip install pipenv
           cd backend
           pipenv install --dev  # Install all dependencies including dev dependencies
-    
-      # Build and Run docker image
+
       - name: Build Docker Image
         run: cd backend && docker build -t mp-backend .
