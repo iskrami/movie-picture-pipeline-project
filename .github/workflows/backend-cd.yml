@@ -109,18 +109,12 @@ jobs:
      
       
       # Deploy to kubernetes
-      # - name: Push to Kuberenetes
-        # run: |
-          # cd backend/k8s
-          # kustomize edit set image backend=425586105601.dkr.ecr.us-east-1.amazonaws.com/backend-repo:mp-backend
-          # kustomize build | kubectl apply -f -
+      - name: Push to Kuberenetes
+        run: |
+          cd backend/k8s
+          kustomize edit set image backend=$REGISTRY/$REPOSITORY:mp-backend
+          kustomize build | kubectl apply -f -
           
-      # Review logs
-      # - run: docker logs -f mp-backend
-      
-      # Stop the application
-      # - run: docker stop
-
       # Send a console message at completion.
       - run: |
           echo "Hello ${{github.actor}}. You pushed to ${{github.repository}} at $(date)."
