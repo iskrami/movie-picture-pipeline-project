@@ -1,15 +1,14 @@
 name: Backend Continuous Deployment
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Backend Continuous Integration"]
+    types:
+      - completed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    needs: build-test
 
     steps:
       - name: Checkout code
