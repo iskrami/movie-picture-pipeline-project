@@ -105,16 +105,17 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: backend-repo
+          IMAGE_TAG: ${{ github.run_number }}
         run: |
-          docker tag mp-backend $REGISTRY/$REPOSITORY:mp-backend
-          docker push $REGISTRY/$REPOSITORY:mp-backend
+          docker tag mp-backend $REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
+          docker push $REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
      
       
       # Deploy to kubernetes
       - name: Push to Kuberenetes
         run: |
           cd backend/k8s
-          kustomize edit set image backend=$REGISTRY/$REPOSITORY:mp-backend
+          kustomize edit set image backend=$REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
           kustomize build | kubectl apply -f -
           
       # Send a console message at completion.
