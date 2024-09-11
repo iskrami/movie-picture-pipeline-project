@@ -31,7 +31,7 @@ jobs:
 
       - name: Load Docker image
         run: |
-          docker load -i backend/mp-backend.tar
+          docker load -i mp-backend.tar
 
       - name: Login to Amazon ECR
         id: login-ecr
