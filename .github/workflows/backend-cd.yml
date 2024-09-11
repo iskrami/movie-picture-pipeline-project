@@ -111,10 +111,10 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
               
       # Ensure kustomize is installed
-      - name: Install Kustomize
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y kustomize
+      # - name: Install Kustomize
+        # run: |
+          # sudo apt-get update
+          # sudo apt-get install -y kustomize
       
       # Deploy to kubernetes
       - name: Push to Kuberenetes
