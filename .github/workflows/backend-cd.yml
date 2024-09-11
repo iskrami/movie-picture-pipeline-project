@@ -71,10 +71,12 @@ jobs:
   stage_deploy:
     runs-on: ubuntu-latest
     needs: install-build-test
-    environment:
-      name: staging
 
     steps:
+      # Check out the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
       # Simulate a Deployment
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
