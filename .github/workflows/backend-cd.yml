@@ -109,12 +109,7 @@ jobs:
         run: |
           docker tag mp-backend $REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
           docker push $REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
-     
-         # Set up kubeconfig for kubectl
-      - name: Set up Kubeconfig
-        run: |
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-          
+              
       # Ensure kustomize is installed
       - name: Install Kustomize
         run: |
@@ -129,8 +124,9 @@ jobs:
           IMAGE_TAG: ${{ github.run_number }}
         run: |
           cd backend/k8s
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
           kustomize edit set image backend=$REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
-          kustomize build | kubectl apply -f -
+          kustomize build | kubectl apply -f --kubeconfig=kubeconfig.yaml
           
       # Send a console message at completion.
       - run: |
