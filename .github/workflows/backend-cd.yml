@@ -105,16 +105,10 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: backend-repo
-          IMAGE_TAG: ${{ github.run_number }}
+          IMAGE_TAG: mp-backend-${{ github.run_number }}
         run: |
-          docker tag mp-backend $REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
-          docker push $REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
-              
-      # Set up kubeconfig for kubectl
-      # - name: Set up Kubeconfig
-        # run: |
-          # mkdir -p $HOME/.kube
-          # echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          docker tag mp-backend $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           
       - name: Update Kubeconfig
         run: aws eks update-kubeconfig --name movie-picture-cluster --region us-east-1
@@ -127,7 +121,7 @@ jobs:
           IMAGE_TAG: ${{ github.run_number }}
         run: |
           cd backend/k8s
-          kustomize edit set image backend=$REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
+          kustomize edit set image backend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
           kustomize build | kubectl apply -f -
           
       # Send a console message at completion.
