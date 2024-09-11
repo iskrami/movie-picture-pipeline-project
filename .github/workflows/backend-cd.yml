@@ -113,14 +113,24 @@ jobs:
          # Set up kubeconfig for kubectl
       - name: Set up Kubeconfig
         run: |
-          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          
+      # Ensure kustomize is installed
+      - name: Install Kustomize
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y kustomize
       
       # Deploy to kubernetes
       - name: Push to Kuberenetes
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: backend-repo
+          IMAGE_TAG: ${{ github.run_number }}
         run: |
           cd backend/k8s
           kustomize edit set image backend=$REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
-          kustomize build | kubectl apply -f --kubeconfig=kubeconfig.yaml
+          kustomize build | kubectl apply -f -
           
       # Send a console message at completion.
       - run: |
