@@ -124,9 +124,12 @@ jobs:
           IMAGE_TAG: ${{ github.run_number }}
         run: |
           cd backend/k8s
-          kustomize edit set image backend=$REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
-          kustomize build | kubectl apply -f -
+          kubectl apply -f deployment.yaml
           
       # Send a console message at completion.
       - run: |
           echo "Hello ${{github.actor}}. You pushed to ${{github.repository}} at $(date)."
+          
+          
+# kustomize edit set image backend=$REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
+# kustomize build | kubectl apply -f -
