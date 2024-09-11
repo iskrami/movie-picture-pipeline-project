@@ -94,7 +94,7 @@ jobs:
     
       # Build and Run docker image
       - name: Build Docker Image
-        run: docker build -t mp-backend .
+        run: cd backend && docker build -t mp-backend .
       # - run: cd backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
       
       # Save the Docker image as a tarball
