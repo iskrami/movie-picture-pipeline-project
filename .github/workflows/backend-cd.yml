@@ -113,14 +113,14 @@ jobs:
          # Set up kubeconfig for kubectl
       - name: Set up Kubeconfig
         run: |
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
       
       # Deploy to kubernetes
       - name: Push to Kuberenetes
         run: |
           cd backend/k8s
           kustomize edit set image backend=$REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
-          kustomize build | kubectl apply -f -
+          kustomize build | kubectl apply -f --kubeconfig=kubeconfig.yaml
           
       # Send a console message at completion.
       - run: |
