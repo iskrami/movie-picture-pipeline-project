@@ -111,10 +111,13 @@ jobs:
           docker push $REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
               
       # Set up kubeconfig for kubectl
-      - name: Set up Kubeconfig
-        run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+      # - name: Set up Kubeconfig
+        # run: |
+          # mkdir -p $HOME/.kube
+          # echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          
+      - name: Update Kubeconfig
+        run: aws eks update-kubeconfig --name movie-picture-cluster --region us-east-1
       
       # Deploy to kubernetes
       - name: Push to Kuberenetes
@@ -124,12 +127,11 @@ jobs:
           IMAGE_TAG: ${{ github.run_number }}
         run: |
           cd backend/k8s
-          kubectl apply -f deployment.yaml
+          kustomize edit set image backend=$REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
+          kustomize build | kubectl apply -f -
           
       # Send a console message at completion.
       - run: |
           echo "Hello ${{github.actor}}. You pushed to ${{github.repository}} at $(date)."
           
           
-# kustomize edit set image backend=$REGISTRY/$REPOSITORY:mp-backend-${IMAGE_TAG}
-# kustomize build | kubectl apply -f -
