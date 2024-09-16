@@ -126,7 +126,11 @@ jobs:
         run: |
           cd backend/k8s
           kustomize edit set image backend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
-          kustomize build | kubectl apply -f - | kubectl get svc -A
+          kustomize build | kubectl apply -f - 
+          
+      - name: Print Kubernetes Services
+        run: |  
+          kubectl get svc -A
           
       # Send a console message at completion.
       - run: |
