@@ -115,7 +115,6 @@ jobs:
           REPOSITORY: backend-repo
           IMAGE_TAG: mp-backend-${{ github.run_number }}
         run: |
-          docker build -t mp-backend .
           docker tag mp-backend $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           
