@@ -126,7 +126,7 @@ jobs:
         run: |
           cd backend/k8s
           kustomize edit set image backend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
-          echo "This is backend: ${backend}"
+          echo "This is backend: $REGISTRY/$REPOSITORY:$IMAGE_TAG"
           kustomize build | kubectl apply -f - 
           sleep 10
           
