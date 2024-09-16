@@ -80,14 +80,14 @@ jobs:
           aws-region: us-east-1
           
       # Download and load the Docker image artifact
-      - name: Download Docker image artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: mp-backend-image
+      # - name: Download Docker image artifact
+        # uses: actions/download-artifact@v3
+        # with:
+          # name: mp-backend-image
 
-      - name: Load Docker image
-        run: |
-          docker load -i mp-backend.tar
+      # - name: Load Docker image
+        # run: |
+          # docker load -i mp-backend.tar
       
       # Authenticate to Amazon ECR
       - name: Login to Amazon ECR
