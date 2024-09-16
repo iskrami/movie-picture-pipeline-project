@@ -16,7 +16,7 @@ on:
       - 'frontend/**'
       
 env:
-  REACT_APP_MOVIE_API_URL: 'http://localhost:5000'
+  REACT_APP_MOVIE_API_URL: 'af095a2c5ed7d43bb8e1884013ed6f77-1825718870.us-east-1.elb.amazonaws.com'
   
 jobs:
   test:
