@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   
   # Automatic trigger on pull request events targeting the main branch
-  pull_request:
+  push:
     branches:
       - main
       
@@ -126,7 +126,7 @@ jobs:
         run: |
           cd backend/k8s
           kustomize edit set image backend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
-          kustomize build | kubectl apply -f -
+          kustomize build | kubectl apply -f - | kubectl get svc -A
           
       # Send a console message at completion.
       - run: |
