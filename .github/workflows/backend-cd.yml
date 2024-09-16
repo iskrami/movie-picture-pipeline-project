@@ -118,7 +118,7 @@ jobs:
         run: |
           docker tag mp-backend $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          echo "test = $REGISTRY/$REPOSITORY:$IMAGE_TAG"
+          test = echo $REGISTRY/$REPOSITORY:$IMAGE_TAG
           
       - name: Update Kubeconfig
         run: aws eks update-kubeconfig --name movie-picture-cluster --region us-east-1
