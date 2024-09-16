@@ -169,7 +169,7 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: frontend-repo
-          IMAGE_TAG: mp-frontend-${{ github.run_number }}
+          IMAGE_TAG: latest
         run: |
           docker tag mp-frontend $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
@@ -181,8 +181,13 @@ jobs:
       - name: Push to Kubernetes
         run: |
           cd frontend/k8s
-          kustomize edit set image frontend=$REGISTRY/$REPOSITORY:$IMAGE_TAG
+          kustomize edit set image frontend=${{ steps.login-ecr.outputs.registry }}/frontend-repo:latest
           kustomize build | kubectl apply -f -
+          sleep 10
+          
+      - name: Print Kubernetes Services
+        run: |  
+          kubectl get svc -A
 
       # Send a console message at completion.
       - run: |
