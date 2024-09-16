@@ -110,14 +110,23 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build, tag, and push docker image to Amazon ECR
-        id: build-and-push
+        # id: build-and-push
+        # env:
+          # REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          # REPOSITORY: backend-repo
+          # IMAGE_TAG: mp-backend-${{ github.run_number }}
+        # run: |
+          # docker tag mp-backend $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          # docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
         env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: backend-repo
-          IMAGE_TAG: mp-backend-${{ github.run_number }}
+            IMAGE_TAG: mp-backend-${{ github.run_number }}
+            REPO_NAME: backend-repo
         run: |
-          docker tag mp-backend $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+            docker tag mp-backend ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG .
+            docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/$REPO_NAME:$IMAGE_TAG
+          
+          
           
       - name: Update Kubeconfig
         run: aws eks update-kubeconfig --name movie-picture-cluster --region us-east-1
