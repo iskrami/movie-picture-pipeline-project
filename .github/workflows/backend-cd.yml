@@ -60,21 +60,6 @@ jobs:
         run: |
           cd backend
           pipenv run lint
-
-      # Build and Run docker image
-      - run: cd backend && docker build -t mp-backend .
-      
-      # Save the Docker image as a tarball
-      - name: Save Docker image as artifact
-        run: |
-          docker save mp-backend -o mp-backend.tar
-
-      # Upload the tarball as an artifact
-      - name: Upload Docker image artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: mp-backend-image
-          path: mp-backend.tar
       
   stage_deploy:
     runs-on: ubuntu-latest
@@ -115,7 +100,7 @@ jobs:
           REPOSITORY: backend-repo
           IMAGE_TAG: mp-backend-${{ github.run_number }}
         run: |
-          docker tag mp-backend $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker build --tag $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           
       - name: Update Kubeconfig
