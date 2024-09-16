@@ -110,13 +110,15 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build, tag, and push docker image to Amazon ECR
+        id: tag-push
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: backend-repo
           IMAGE_TAG: mp-backend-${{ github.run_number }}
         run: |
           docker tag mp-backend $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG          
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          echo "test = $REGISTRY/$REPOSITORY:$IMAGE_TAG"
           
       - name: Update Kubeconfig
         run: aws eks update-kubeconfig --name movie-picture-cluster --region us-east-1
@@ -126,7 +128,7 @@ jobs:
         run: |
           cd backend/k8s
           kustomize edit set image backend=425586105601.dkr.ecr.us-east-1.amazonaws.com/backend-repo:mp-backend-55
-          echo "This is backend: $REGISTRY/$REPOSITORY:$IMAGE_TAG"
+          echo "This is backend: ${{ steps.tag-push.outputs.test }}"
           kustomize build | kubectl apply -f - 
           sleep 10
           
