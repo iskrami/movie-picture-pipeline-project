@@ -114,11 +114,10 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: backend-repo
-          IMAGE_TAG: mp-backend-${{ github.run_number }}
+          IMAGE_TAG: latest
         run: |
           docker tag mp-backend $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          test = echo $REGISTRY/$REPOSITORY:$IMAGE_TAG
           
       - name: Update Kubeconfig
         run: aws eks update-kubeconfig --name movie-picture-cluster --region us-east-1
@@ -127,8 +126,7 @@ jobs:
       - name: Push to Kubernetes
         run: |
           cd backend/k8s
-          kustomize edit set image backend=${{ steps.login-ecr.outputs.registry }}/backend-repo:mp-backend-55
-          echo ${{ steps.tag-push.outputs.test }}
+          kustomize edit set image backend=${{ steps.login-ecr.outputs.registry }}/backend-repo:latest
           kustomize build | kubectl apply -f - 
           sleep 10
           
